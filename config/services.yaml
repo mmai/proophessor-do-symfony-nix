@@ -105,12 +105,15 @@ services:
 
     Prooph\ProophessorDo\Model\User\Service\ChecksUniqueUsersEmailAddress:
         class: Prooph\ProophessorDo\Infrastructure\Service\ChecksUniqueUsersEmailAddressFromReadModel
+        arguments: ['@proophdo.todo_projection.user_finder']
 
     Prooph\ProophessorDo\ProcessManager\SendTodoReminderMailProcessManager:
         public: true
+        arguments: ['@prooph_service_bus.todo_command_bus']
 
     Prooph\ProophessorDo\ProcessManager\SendTodoDeadlineExpiredMailProcessManager:
         public: true
+        arguments: ['@prooph_service_bus.todo_command_bus']
 
     proophdo.todo_projection.user_finder:
         class: Prooph\ProophessorDo\Projection\User\UserFinder

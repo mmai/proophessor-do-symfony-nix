@@ -71,6 +71,9 @@
             "ref": "70062abc2cd58794d2a90274502f81b55cd9951b"
         }
     },
+    "egulias/email-validator": {
+        "version": "2.1.6"
+    },
     "friendsofphp/php-cs-fixer": {
         "version": "2.2",
         "recipe": {
@@ -382,9 +385,6 @@
     },
     "symfony/stopwatch": {
         "version": "v4.0.4"
-    },
-    "symfony/swiftmailer-bridge": {
-        "version": "v2.8.46"
     },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",
