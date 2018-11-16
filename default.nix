@@ -24,7 +24,7 @@ in
 stdenv.mkDerivation rec {
   name = "mywebapp-${version}";
   version = "0.1.0";
-  buildInputs = (with pkgs; [ php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql ]); 
+  buildInputs = (with pkgs; [ php phpPackages.psysh phpPackages.xdebug phpPackages.composer nginx mysql57 ]); 
 
   shellHook = ''
     alias php="${pkgs.php}/bin/php -c ${phpIni}"
@@ -49,12 +49,12 @@ stdenv.mkDerivation rec {
         echo "==============   Starting mysql..."
         echo "pour activer logs mysql:"
         echo "start-stop-daemon --stop --pidfile nixfiles/mysql/data/mysqld.pid"
-        echo "${pkgs.mysql}/bin/mysqld --defaults-extra-file=${mysqlConf} --general_log=1 --general_log_file=${mysqlDir}/tmp/requests.log &)"
+        echo "${pkgs.mysql57}/bin/mysqld --defaults-extra-file=${mysqlConf} --general_log=1 --general_log_file=${mysqlDir}/tmp/requests.log &)"
         echo ""
         echo ""
-        test -e ${mysqlDir}/data/mysql || (${pkgs.mysql}/bin/mysql_install_db --basedir=${pkgs.mysql} --datadir=${mysqlDir}/data && touch ${mysqlDir}/data/initRequired)
-        ${pkgs.mysql}/bin/mysqld --defaults-extra-file=${mysqlConf} &
-        test -e ${mysqlDir}/data/initRequired && (echo "Initializing root password..." && sleep 5 && mysqladmin -uroot -h127.0.0.1 -P${cfg.mysqlPort} password "${cfg.mysqlPassword}" && rm -f ${mysqlDir}/data/initRequired)
+        test -e ${mysqlDir}/data/mysql || (${pkgs.mysql57}/bin/mysqld --initialize --basedir=${pkgs.mysql57} --datadir=${mysqlDir}/data 2> ${mysqlDir}/tmp/mysql_err.log && touch ${mysqlDir}/data/initRequired)
+        ${pkgs.mysql57}/bin/mysqld --defaults-extra-file=${mysqlConf} &
+        test -e ${mysqlDir}/data/initRequired && (echo "Initializing root password..." && sleep 5 && mysqladmin -uroot -h127.0.0.1 -P${cfg.mysqlPort} -p$(grep root@localhost ${mysqlDir}/tmp/mysql_err.log| awk '{print $NF}') password "${cfg.mysqlPassword}" && rm -f ${mysqlDir}/data/initRequired)
       fi
     }
     startServices
